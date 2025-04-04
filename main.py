@@ -16,20 +16,23 @@ class MyForm(QDialog):
         self.password = ""
 
     def generate_password(self):
-        if self.ui.letter_size_check.isChecked() and self.ui.number_check.isChecked() and self.ui.special_check.isChecked():
-            password_letters = list("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_=+")
-        elif self.ui.letter_size_check.isChecked() and self.ui.number_check.isChecked():
-            password_letters = list("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789")
-        elif self.ui.number_check.isChecked() and self.ui.special_check.isChecked():
-            password_letters = list("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_=+")
-        elif self.ui.special_check.isChecked() and self.ui.letter_size_check.isChecked():
-            password_letters = list("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@#$%^&*()-_=+")
-        else:
-            password_letters = list("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+        small_letters = 'abcdefghijklmnopqrstuvwxyz'
+        big_letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+        special_character = '!@#$%^&*()-_=+'
+        numbers = '0123456789'
 
         try:
             password_length = int(self.ui.letter_number_edit.text())
-            self.password = "".join(random.choice(password_letters) for _ in range(password_length))
+            password = random.choices(small_letters, k=password_length)
+            if self.ui.letter_size_check.isChecked():
+                password[random.randint(0, password_length - 1)] = random.choice(big_letters)
+            if self.ui.number_check.isChecked():
+                password[random.randint(0, password_length - 1)] = random.choice(numbers)
+            if self.ui.special_check.isChecked():
+                password[random.randint(0, password_length - 1)] = random.choice(special_character)
+
+            self.password = "".join(password)
+
             message = QMessageBox()
             message.setText(self.password)
             message.exec()
